@@ -1,5 +1,7 @@
 package ru.maxkizi.javapractice;
 
+import ru.maxkizi.javapractice.exceptions.MyValidationException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,19 +11,27 @@ public class UnboxString {
     public static final String BASE_REGEX = "\\d+\\[\\w*\\]";
     public static final String CHECK_BRACKET = ".*\\[.*";
 
-    private Pattern pattern;
+    String inboundString;
+    Validator validator;
+    public UnboxString(String inboundString) {
+        validator = new Validator(inboundString);
+        this.inboundString = inboundString;
+    }
 
-    public String unpackString(String inbound) {
 
-        pattern = Pattern.compile(BASE_REGEX);
 
-        while (inbound.matches(CHECK_BRACKET)) {
-            Matcher matcher = pattern.matcher(inbound);
+    public String unpackString() throws MyValidationException {
+
+        validator.fullValidation();
+
+        Pattern pattern = Pattern.compile(BASE_REGEX);
+        while (inboundString.matches(CHECK_BRACKET)) {
+            Matcher matcher = pattern.matcher(inboundString);
             matcher.find();
             String resultString = multipleString(matcher.group());
-            inbound = matcher.replaceFirst(resultString);
+            inboundString = matcher.replaceFirst(resultString);
         }
-        return inbound;
+        return inboundString;
     }
 
     // multiplying of substring, for example: 3[xy] = xyxyxy

@@ -1,7 +1,7 @@
 package ru.maxkizi.javapractice.exceptions;
 
-public class NotLatinLettersException extends UnpackingException {
+public class NotLatinLettersException extends MyValidationException {
     public NotLatinLettersException(){
-        super("There is cyrillic symbol in input string");
+        super("There is not latin symbol in input string");
     }
 }

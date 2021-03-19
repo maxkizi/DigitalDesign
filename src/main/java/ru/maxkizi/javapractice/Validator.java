@@ -1,9 +1,6 @@
 package ru.maxkizi.javapractice;
 
-import ru.maxkizi.javapractice.exceptions.DoubleBracketException;
-import ru.maxkizi.javapractice.exceptions.NotLatinLettersException;
-import ru.maxkizi.javapractice.exceptions.UnpackingException;
-
+import ru.maxkizi.javapractice.exceptions.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,26 +11,24 @@ public class Validator {
         this.inboundString = inboundString;
     }
 
-    public void fullValidation(String string) throws UnpackingException {
-       doubleBracketValidation(string);
-       latinLettersValidation(string);
-       spaceValidation(string);
-       digitBracketValidation(string);
+    public void fullValidation() throws MyValidationException {
+       doubleBracketValidation();
+       latinLettersValidation();
+       spaceValidation();
+       digitBracketValidation();
     }
 
-    public void digitBracketValidation(String string) {
-    }
-
-    public void spaceValidation(String string) {
-    }
-
-    public void latinLettersValidation(String string) throws NotLatinLettersException {
-        if(!(string.matches(".*(\\w+)+.*"))){
-            throw new NotLatinLettersException();
+    public void digitBracketValidation() throws BracketException {
+        if(this.inboundString.matches("\\w+"))
+            return;
+        Pattern pattern = Pattern.compile("(\\d)+\\w+");
+        Matcher matcher = pattern.matcher(this.inboundString);
+        if (matcher.find()){
+            throw new BracketException();
         }
     }
 
-    public void doubleBracketValidation(String string) throws DoubleBracketException {
+    public void doubleBracketValidation() throws DoubleBracketException {
         String openBracketReg = "\\[";
         String closeBracketReg = "\\]";
 
@@ -41,18 +36,58 @@ public class Validator {
         int closedBracketsCount = 0;
 
         Pattern pattern1 = Pattern.compile(openBracketReg);
-        Matcher matcher1 = pattern1.matcher(string);
+        Matcher matcher1 = pattern1.matcher(inboundString);
         while (matcher1.find()) {
             openedBracketsCount++;
         }
 
         Pattern pattern2 = Pattern.compile(closeBracketReg);
-        Matcher matcher2 = pattern2.matcher(string);
+        Matcher matcher2 = pattern2.matcher(inboundString);
         while (matcher2.find()) {
             closedBracketsCount++;
         }
-        if (!(closeBracketReg==openBracketReg)){
+        if (!(closedBracketsCount==openedBracketsCount)){
             throw new DoubleBracketException();
         }
     }
+
+    public void spaceValidation() throws SpaceException {
+        Pattern pattern = Pattern.compile("\\s+");
+        Matcher matcher = pattern.matcher(this.inboundString);
+
+        if (matcher.find()){
+            throw new SpaceException();
+        }
+    }
+
+    public void latinLettersValidation() throws NotLatinLettersException {
+
+        String s1 ="";
+        String s2 ="";
+        String s3 ="";
+
+        Pattern pattern = Pattern.compile("[^A-Za-z]");
+        Matcher matcher = pattern.matcher(this.inboundString);
+        while(matcher.find()){
+            s1 +=(matcher.group());
+        }
+
+        pattern = Pattern.compile("[^\\d]");
+        matcher = pattern.matcher(s1);
+        while(matcher.find()){
+            s2+= (matcher.group());
+        }
+
+
+        pattern = Pattern.compile("(\\[|])*");
+        matcher = pattern.matcher(s2);
+        while(matcher.find()){
+            s3 = matcher.replaceAll("");
+        }
+        if(s3.length() != 0){
+            throw new NotLatinLettersException();
+        }
+    }
+
+
 }

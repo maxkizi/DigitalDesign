@@ -5,24 +5,21 @@ import ru.maxkizi.javapractice.exceptions.MyValidationException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class UnboxString {
+public class UnpackerString {
 
     public static final String REGEX_FOR_MULTIPLE = "\\[\\w+\\]";
     public static final String BASE_REGEX = "\\d+\\[\\w*\\]";
     public static final String CHECK_BRACKET = ".*\\[.*";
 
-    String inboundString;
-    Validator validator;
-    public UnboxString(String inboundString) {
-        validator = new Validator(inboundString);
-        this.inboundString = inboundString;
-    }
+
+    private Validator validator;
 
 
 
-    public String unpackString() throws MyValidationException {
 
-        validator.fullValidation();
+    public String unpackString(String inboundString) throws MyValidationException {
+
+        new Validator(inboundString).fullValidation();
 
         Pattern pattern = Pattern.compile(BASE_REGEX);
         while (inboundString.matches(CHECK_BRACKET)) {
@@ -35,7 +32,7 @@ public class UnboxString {
     }
 
     // multiplying of substring, for example: 3[xy] = xyxyxy
-    public String multipleString(String inbound) {
+    private String multipleString(String inbound) {
         StringBuilder string = new StringBuilder();
         int ratio = Integer.parseInt(inbound.replaceAll(REGEX_FOR_MULTIPLE, ""));
         String target = inbound.substring(inbound.indexOf('[') + 1, inbound.indexOf(']'));

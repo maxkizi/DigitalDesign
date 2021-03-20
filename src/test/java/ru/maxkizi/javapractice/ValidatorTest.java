@@ -23,7 +23,7 @@ public class ValidatorTest {
     //отсутсвие скобки после цифры
     @Test(expected = BracketException.class)
     public void bracketTest() throws BracketException {
-        new Validator("12[a2[b]]").digitBracketValidation();
+        new Validator("12ca2[b]]").digitBracketValidation();
     }
 
     //наличие пробела
